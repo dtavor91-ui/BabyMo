@@ -22,7 +22,9 @@ jobs:
         run: |
           FILE=$(find project -name MainActivity.kt | head -1)
           sed -i 's/MediaType.parse(\([^)]*\))/\1.toMediaTypeOrNull()/g' "$FILE"
-          sed -i '/^import okhttp3.MediaType$/a import okhttp3.MediaType.Companion.toMediaTypeOrNull' "$FILE"
+          if ! grep -q '^import okhttp3.MediaType.Companion.toMediaTypeOrNull$' "$FILE"; then
+            sed -i '/^package /a import okhttp3.MediaType.Companion.toMediaTypeOrNull' "$FILE"
+          fi
       - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
